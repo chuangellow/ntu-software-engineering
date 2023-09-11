@@ -86,3 +86,41 @@ scope resolution operator ```::``` 可以給予被定義的成員適當的範圍
 
 另外，在 C++ 中不同於 C 的部分是 struct 同時可以有資料和 function，因此 struct 和 class 的功能相同，唯一的差別在：**class 定義的類別所有成員的默認存取權限為 private，而 struct 定義的類
 別所有成員默認存取權限為 public**。
+
+## 2. Constructors and Destructors
+
+通常我們在宣告 object 時，會去初始化變數和分配動態記憶體，但在上面例子中，我們沒有初始化 Point 中的 x, y 值，
+
+因此，我們在 class 中可以包含一個 constructor 的 function，來讓宣告一個該 class 的 object 時，會自動調用該 constructor 的 function 以初始化變數和分配動態記憶體。
+
+下面就是 constructor 的定義方法：
+
+```
+#include <iostream>
+
+class Point {
+		int x, y;
+	public:
+		Point (int, int);
+		int distance_to_origin(void);
+		int get_x(void) {return x;}
+		int get_y(void) {return y;}
+};
+
+Point::Point(int a, int b) {
+	x = a;
+	y = b;
+}
+
+int Point::distance_to_origin(void) {
+	return x*x + y*y;
+}
+
+int main(void) {
+	Point new_point (3, 4);
+	std::cout << new_point.distance_to_origin() << std::endl;
+	return 0;
+}
+```
+
+可以看到，這邊的 ```Point::Point``` 就是 constructor function 的定義，會在宣告 Point 時初始化 x, y 值
