@@ -169,6 +169,8 @@ int main(void) {
 
 ## 3. Overloading Constructor
 
+在 C++ 中有提供 function overload 的功能，可以提供一個統一名稱的 function，但不同的 arguments 來讓 compiler 選擇要對應使用的 function。
+
 當我們定義 class 卻沒有定義 constructor 時，編譯器會自動假設兩個 overload constructor 為：
 
 - empty constructor：沒有任何參數的 constructor，被定義為 nop，什麼都不會做。
@@ -248,10 +250,92 @@ Point *point;
 ```
 int main(void) {
 	Point *p = new Point(3, 4);
+	Point new_point = Point(5, 6);
+	Point *pp = &new_point;
 	std::cout << p->get_x() << std::endl;
 	std::cout << p->get_y() << std::endl;
+	std::cout << (*pp).get_x() << std::endl;
+	std::cout << (*pp).get_y() << std::endl;
 	return 0;
 }
 ```
 
-直接透過 operator ```->``` 來使用 Pointer 的 member function 
+直接透過 operator ```p->member``` 來使用 Pointer 的 member function，也等價於使用：```(*p).member```
+
+## 5. Overloading Operator
+
+如果我們要在不同 class 間定義運算的話，就必須使用到  C++ overload 的能力，
+
+舉例來說，我們可以直接利用 int 間使用 ```+``` 來做兩整數間的加法，但如果使用：
+
+```
+Point a, b, c;
+c = a + b;
+```
+這樣的 class 加法時，我們就必須透過定義 overloading operator 來讓 compilier 知道 Point 間相加的運算要怎麼處理。
+
+overloading operator 可以定義在 class 裡的 member function 中：
+
+```
+type operator sign (parameters);
+```
+
+舉例來說：
+
+```
+Point Point::operator+ (Point param) {
+	Point temp;
+	temp.x = x + param.x;
+	temp.y = y + param.y;
+	return temp;
+}
+
+Point Point::operator- (Point param) {
+	Point temp;
+	temp.x = x - param.x;
+	temp.y = y - param.y;
+	return temp;
+}
+```
+
+就定義了在 Point 這個 class 間 ```+``` 和 ```-``` 的操作，我們可以直接用：
+
+```
+Point a, b, c;
+c = a + b;
+```
+
+或是：
+```
+c = a.operator+ b;
+```
+
+而通常，assignation operator 會被自動定義，如果沒有特別指定：
+```
+c = a;
+```
+代表的是將等號右邊的物件中的 non-static member 複製到等號左邊的物件。
+
+而常見可以 overload 的 operator 如下圖所示：
+
+![](./images/overload_operator.png)
+![](./images/overload_operator_2.png)
+
+下面是一個 prefix 和 postfix increment operator 的實作範例：
+
+```
+Point& Point::operator++(void) {
+	*x = *x + 1;
+	*y = *y + 1;
+	return *this;
+}
+
+Point Point::operator++(int) {
+	Point temp = *this;
+	++*this;
+	return temp;
+}
+```
+
+可以看到的是，這裡先定義了 prefix increment operator，再利用 prefix 去定義 postfix。
+
