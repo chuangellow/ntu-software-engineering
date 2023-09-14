@@ -339,3 +339,41 @@ Point Point::operator++(int) {
 
 可以看到的是，這裡先定義了 prefix increment operator，再利用 prefix 去定義 postfix。
 
+可以注意到的是，我們可以定義 overloading operator 為 member function 或是 global function，但要特別注意的是 global function 如果不是該 class 的 friend function，就不能存取到該 class 的 private 或 protected member。
+
+## 6. This
+
+我們可以透過 ```this``` 關鍵字來在 class 內部取得該 class 的 object 的記憶體位址，```this``` 就是一個 pointer，指向該 class 建構的 object 的記憶體位址。
+
+下面就是使用到 this 的一個例子：
+
+```
+#include <iostream>
+
+using namespace std;
+
+class A {
+	public:
+		int isitme(A *ptr) {
+			if (ptr == this) return 1;
+			else return 0;
+		}
+};
+
+int main(void) {
+	A obj;
+	A obj2;
+	cout << ((obj.isitme(&obj))? "It's me!": "It's not me.") << endl;
+	cout << ((obj.isitme(&obj2))? "It's me!": "It's not me.") << endl;
+	return 0;
+}
+```
+
+而 ```this``` 關鍵字也常常用於 assignation operator overloading 中，如下所示：
+
+```
+Point& Point::operator=(const Point& param) {
+	x = param.x;
+	y = param.y;
+	return *this;
+}  
